@@ -55,16 +55,7 @@ func (a *psikologRepository) FindAll(ctx context.Context) []bson.M {
 		},
 	}
 
-	// var pipeline []primitive.M = []bson.M{
-	// 	{
-	// 		"$lookup": bson.M{
-	// 			"from":         "reviews",
-	// 			"localField":   "_id",
-	// 			"foreignField": "psikolog_id",
-	// 			"as":           "reviews",
-	// 		},
-	// 	},
-	// }
+
 
 	cursor, err := a.collection.Aggregate(ctx, pipeline)
 
