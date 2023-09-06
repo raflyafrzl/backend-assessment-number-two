@@ -44,9 +44,18 @@ func (p *PsikologController) Create(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.Unmarshal(body, &request)
 
+	var rawResponse map[string]any = map[string]any{
+		"Status":     "Success",
+		"StatusCode": 201,
+		"Message":    "Data has been successfully created",
+	}
+
 	p.service.Create(request.Name)
+
+	response, _ := json.Marshal(rawResponse)
 	w.WriteHeader(201)
-	w.Write([]byte("Success"))
+
+	w.Write(response)
 
 }
 func (p *PsikologController) List(w http.ResponseWriter, r *http.Request) {

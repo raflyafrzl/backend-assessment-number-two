@@ -5,9 +5,8 @@ import (
 	"teduh-mongodb-assessment/contract"
 	"teduh-mongodb-assessment/entities"
 	"teduh-mongodb-assessment/model"
-	
+
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -45,7 +44,7 @@ func (a *psikologRepository) Insert(ctx context.Context, name string) error {
 
 func (a *psikologRepository) FindAll(ctx context.Context) []bson.M {
 
-	var pipeline []primitive.M = []bson.M{
+	var pipeline []bson.M = []bson.M{
 		{
 			"$lookup": bson.M{
 				"from":         "reviews",
@@ -55,6 +54,17 @@ func (a *psikologRepository) FindAll(ctx context.Context) []bson.M {
 			},
 		},
 	}
+
+	// var pipeline []primitive.M = []bson.M{
+	// 	{
+	// 		"$lookup": bson.M{
+	// 			"from":         "reviews",
+	// 			"localField":   "_id",
+	// 			"foreignField": "psikolog_id",
+	// 			"as":           "reviews",
+	// 		},
+	// 	},
+	// }
 
 	cursor, err := a.collection.Aggregate(ctx, pipeline)
 

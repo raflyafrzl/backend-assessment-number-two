@@ -41,6 +41,7 @@ func (a *psikologUseCase) List() []entities.PsikologReview {
 	var results []entities.PsikologReview
 	var avg float32
 	for index, data := range docs {
+		avg = 0
 		mongoId := data["_id"].(primitive.ObjectID)
 		results = append(results, entities.PsikologReview{
 			Id:   mongoId.Hex(),
@@ -53,8 +54,14 @@ func (a *psikologUseCase) List() []entities.PsikologReview {
 			avg = avg + float32(d["rating"].(int32))
 		}
 
-		avg = avg / float32(len(results[index].Review))
+		if avg != 0 {
+			avg = avg / float32(len(results[index].Review))
+		} else {
+			avg = 0
+		}
+
 		results[index].Average = avg
+
 	}
 
 	return results

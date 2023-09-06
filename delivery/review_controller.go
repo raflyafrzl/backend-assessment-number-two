@@ -63,5 +63,13 @@ func (c *ReviewController) Create(w http.ResponseWriter, r *http.Request) {
 
 	c.ucase.Create(request)
 
-	w.Write([]byte("sdsd"))
+	var rawResponse map[string]any = map[string]any{
+		"Status":     "Success",
+		"StatusCode": 201,
+		"Message":    "You have been successfully created data",
+	}
+
+	response, _ := json.Marshal(rawResponse)
+
+	w.Write(response)
 }
