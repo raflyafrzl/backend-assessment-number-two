@@ -32,9 +32,14 @@ func main() {
 	r.Use(middlewares.RecoveryMiddleware)
 
 	var psikologRepository contract.PsikologRepository = repository.NewPsikologRepostory(db)
-	var psikologUseCase contract.PsikologService = usecase.NewPsikologUseCase(&psikologRepository)
+	var psikologUseCase contract.PsikologUseCase = usecase.NewPsikologUseCase(&psikologRepository)
 	var psikologController = delivery.NewPsikologController(&psikologUseCase)
 
+	var reviewRepository contract.ReviewRepository = repository.NewReviewRepository(db)
+	var reviewUseCase contract.ReviewUseCase = usecase.NewReviewUseCase(&reviewRepository)
+	var reviewController = delivery.NewReviewController(&reviewUseCase)
+
+	r.Route("/api/v1/review", reviewController.Route)
 	r.Route("/api/v1/psikolog", psikologController.Route)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {

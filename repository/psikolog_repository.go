@@ -5,8 +5,9 @@ import (
 	"teduh-mongodb-assessment/contract"
 	"teduh-mongodb-assessment/entities"
 	"teduh-mongodb-assessment/model"
-
+	
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,7 +29,7 @@ func (a *psikologRepository) Insert(ctx context.Context, name string) error {
 		Name: name,
 	}
 
-	_, err := a.collection.InsertOne(ctx, data)
+	_, err := a.collection.InsertOne(context.TODO(), data)
 
 	if err != nil {
 		panic(model.ResponseFailWeb{
@@ -42,9 +43,20 @@ func (a *psikologRepository) Insert(ctx context.Context, name string) error {
 
 }
 
-func (a *psikologRepository) FindAll(ctx context.Context) []entities.Psikolog {
+func (a *psikologRepository) FindAll(ctx context.Context) []bson.M {
 
-	cursor, err := a.collection.Find(ctx, bson.M{})
+	var pipeline []primitive.M = []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         "reviews",
+				"localField":   "_id",
+				"foreignField": "psikolog_id",
+				"as":           "reviews",
+			},
+		},
+	}
+
+	cursor, err := a.collection.Aggregate(ctx, pipeline)
 
 	if err != nil {
 		panic(model.ResponseFailWeb{
@@ -54,9 +66,8 @@ func (a *psikologRepository) FindAll(ctx context.Context) []entities.Psikolog {
 		})
 	}
 
-	var results []entities.Psikolog
-
-	if err := cursor.All(ctx, &results); err != nil {
+	var docs []bson.M
+	if err := cursor.All(ctx, &docs); err != nil {
 		panic(model.ResponseFailWeb{
 			Status:     "Failed",
 			StatusCode: 404,
@@ -64,5 +75,5 @@ func (a *psikologRepository) FindAll(ctx context.Context) []entities.Psikolog {
 		})
 	}
 
-	return results
+	return docs
 }

@@ -3,14 +3,16 @@ package contract
 import (
 	"context"
 	"teduh-mongodb-assessment/entities"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-type PsikologService interface {
-	List() []entities.Psikolog
+type PsikologUseCase interface {
+	List() []entities.PsikologReview
 	Create(name string)
 }
 
 type PsikologRepository interface {
-	FindAll(ctx context.Context) []entities.Psikolog
+	FindAll(ctx context.Context) []bson.M
 	Insert(ctx context.Context, name string) error
 }

@@ -12,10 +12,10 @@ import (
 )
 
 type PsikologController struct {
-	service contract.PsikologService
+	service contract.PsikologUseCase
 }
 
-func NewPsikologController(s *contract.PsikologService) *PsikologController {
+func NewPsikologController(s *contract.PsikologUseCase) *PsikologController {
 
 	return &PsikologController{
 		service: *s,
@@ -32,7 +32,6 @@ func (p *PsikologController) Create(w http.ResponseWriter, r *http.Request) {
 
 	var request entities.Psikolog
 
-	r.Body.Close()
 	body, err := io.ReadAll(r.Body)
 
 	if err != nil {
@@ -46,19 +45,17 @@ func (p *PsikologController) Create(w http.ResponseWriter, r *http.Request) {
 	_ = json.Unmarshal(body, &request)
 
 	p.service.Create(request.Name)
-
+	w.WriteHeader(201)
 	w.Write([]byte("Success"))
 
 }
 func (p *PsikologController) List(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var results []entities.Psikolog = p.service.List()
+	var results []entities.PsikologReview = p.service.List()
 
 	var rawResponse map[string]any = map[string]any{
-		"Status":  "Success",
-		"Message": "test",
-		"result":  results,
+		"result": results,
 	}
 
 	var response []byte
